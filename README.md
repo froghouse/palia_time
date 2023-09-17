@@ -4,6 +4,8 @@ This is a simple application that pulls the current time from a server using NTP
 
 There is some drift between the displayed time and the actual time in Palia. For this reason, the application will resynchronize with the NTP server once every hour. The server the application will attempt to access is [ntp.pool.org](https://www.ntppool.org/en/). The connection is made via an unsecure UDP connection to port 123 on the server.
 
+![Palia Time application window!](https://i.imgur.com/pTlXcu4.png "Palia Time application window")
+
 ## Python 3.11
 
 The application is written using Python version 3.11 and Tkinter. Tkinter is included in most distributions of Python, except for macOS. However, you can still install Tkinter on macOS and use this application; it just requires one extra step to install the Tkinter package.
