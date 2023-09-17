@@ -2,6 +2,8 @@
 
 This is a simple application that pulls the current time from a server using NTP (Network Time Protocol) and converts it to the current time inside the game Palia. This allows you to know exactly what time it is inside Palia without having to be logged in. This can be useful if you are waiting for an event to start, want to know when items in your sales bin will be sold, or for any other reason you can think of.
 
+There is some drift between the displayed time and the actual time in Palia. For this reason, the application will resynchronize with the NTP server once every hour. The server the application will attempt to access is [ntp.pool.org](https://www.ntppool.org/en/). The connection is made via an unsecure UDP connection to port 123 on the server.
+
 ## Python 3.11
 
 The application is written using Python version 3.11 and Tkinter. Tkinter is included in most distributions of Python, except for macOS. However, you can still install Tkinter on macOS and use this application; it just requires one extra step to install the Tkinter package.
