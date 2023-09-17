@@ -5,6 +5,7 @@ import struct
 import time
 import threading
 
+
 def fetch_ntp_time(ntp_server="pool.ntp.org", ntp_port=123):
     TIME1970 = 2208988800
     client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -16,8 +17,10 @@ def fetch_ntp_time(ntp_server="pool.ntp.org", ntp_port=123):
     timestamp = ntp_response[10] - TIME1970
     return timestamp
 
+
 lock = threading.Lock()
 real_timestamp = [fetch_ntp_time() - 1]
+
 
 def calculate_game_time(real_timestamp):
     SECONDS_IN_HOUR = 3600
@@ -31,6 +34,7 @@ def calculate_game_time(real_timestamp):
 
     # game_time_str = f"{int(game_hour):02d}:{int(game_minute):02d}"
     return (game_hour, game_minute)
+
 
 def update_timestamp(real_timestamp, lock):
     next_sync_time = real_timestamp[0] + 3600
@@ -50,13 +54,17 @@ def update_timestamp(real_timestamp, lock):
         if sleep_duration > 0:
             time.sleep(sleep_duration)
 
+
 def draw_hand(canvas, x, y, length, angle, color, width, tag):
     end_x = x + length * math.cos(angle)
     end_y = y + length * math.sin(angle)
-    canvas.create_line(x, y, end_x, end_y, fill=color, width=width, tags=(tag, "hands"))
+    canvas.create_line(x, y, end_x, end_y, fill=color,
+                       width=width, tags=(tag, "hands"))
     # Draw translucent lines around the main line for faux anti-aliasing
     for i in range(1, 4):
-        canvas.create_line(x, y, end_x, end_y, fill=color, width=width, stipple='gray' + str(25 * i), tags=(tag, "hands"))
+        canvas.create_line(x, y, end_x, end_y, fill=color, width=width,
+                           stipple='gray' + str(25 * i), tags=(tag, "hands"))
+
 
 def update_time(lock, root, canvas, hour_hand, minute_hand):
     with lock:
@@ -68,9 +76,11 @@ def update_time(lock, root, canvas, hour_hand, minute_hand):
     canvas.delete("hands")
 
     # Draw the hands with faux anti-aliasing
-    draw_hand(canvas, 150, 150, 50, math.radians(30 * (hours % 12) + minutes / 2 - 90), 'black', 6, "hour_hand")
-    draw_hand(canvas, 150, 150, 70, math.radians(6 * minutes - 90), 'black', 4, "minute_hand")
-    
+    draw_hand(canvas, 150, 150, 50, math.radians(30 * (hours %
+              12) + minutes / 2 - 90), 'black', 6, "hour_hand")
+    draw_hand(canvas, 150, 150, 70, math.radians(
+        6 * minutes - 90), 'black', 4, "minute_hand")
+
     # Update every 100 ms (0.1 second)
     root.after(100, update_time, lock, root, canvas, hour_hand, minute_hand)
 
@@ -92,13 +102,16 @@ def main():
         y = 150 + 85 * math.sin(angle - math.pi / 2)
         canvas.create_text(x, y, text=str(i), font=("Arial", 18, "bold"))
 
-    timestamp_thread = threading.Thread(target=update_timestamp, args=(real_timestamp, lock))
+    timestamp_thread = threading.Thread(
+        target=update_timestamp, args=(real_timestamp, lock))
     timestamp_thread.daemon = True
     timestamp_thread.start()
 
     # Create clock hands; initial positions don't matter since update_time() will move them
-    hour_hand = canvas.create_line(150, 150, 150, 100, width=6, fill='black', tags="hands")
-    minute_hand = canvas.create_line(150, 150, 150, 50, width=4, fill='blue', tags="hands")
+    hour_hand = canvas.create_line(
+        150, 150, 150, 100, width=6, fill='black', tags="hands")
+    minute_hand = canvas.create_line(
+        150, 150, 150, 50, width=4, fill='blue', tags="hands")
 
     # Draw central circle
     canvas.create_oval(145, 145, 155, 155, fill="black", tags="center")
@@ -107,6 +120,7 @@ def main():
     update_time(lock, root, canvas, hour_hand, minute_hand)
 
     root.mainloop()
+
 
 if __name__ == '__main__':
     main()
