@@ -66,7 +66,7 @@ def draw_hand(canvas, x, y, length, angle, color, width, tag):
                            stipple='gray' + str(25 * i), tags=(tag, "hands"))
 
 
-def update_time(lock, root, canvas, hour_hand, minute_hand):
+def update_time(lock, root, canvas, hour_hand, minute_hand, status_bar, game_time_str):
     with lock:
         current_time = real_timestamp[0]
 
@@ -80,9 +80,13 @@ def update_time(lock, root, canvas, hour_hand, minute_hand):
               12) + minutes / 2 - 90), 'black', 6, "hour_hand")
     draw_hand(canvas, 150, 150, 70, math.radians(
         6 * minutes - 90), 'black', 4, "minute_hand")
+    
+    # Update the status bar
+    game_time_str.set(f"{int(hours):02d}:{int(minutes):02d}")
+    status_bar.config(textvariable=game_time_str)
 
     # Update every 100 ms (0.1 second)
-    root.after(100, update_time, lock, root, canvas, hour_hand, minute_hand)
+    root.after(100, update_time, lock, root, canvas, hour_hand, minute_hand, status_bar, game_time_str)
 
 
 def main():
@@ -116,8 +120,16 @@ def main():
     # Draw central circle
     canvas.create_oval(145, 145, 155, 155, fill="black", tags="center")
 
+    # Careate a variable to store the time in 24-hour format
+    game_time_str = tk.StringVar()
+    game_time_str.set("00:00")
+
+    # Create a status bar to display the time in 24-hour format
+    status_bar = tk.Label(root, textvariable=game_time_str, bd=1, relief=tk.SUNKEN, anchor=tk.W)
+    status_bar.pack(side=tk.BOTTOM, fill=tk.X)
+
     # Start the clock
-    update_time(lock, root, canvas, hour_hand, minute_hand)
+    update_time(lock, root, canvas, hour_hand, minute_hand, status_bar, game_time_str)
 
     root.mainloop()
 
